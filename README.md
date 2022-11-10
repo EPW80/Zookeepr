@@ -7,6 +7,7 @@ This program demonstrates a web server using the Express.js framework and adds i
 - Heroku
 - node.js
 - JavaScript
+- inquirer
 
 ## Deployment
 
