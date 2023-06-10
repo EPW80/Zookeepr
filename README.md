@@ -1,22 +1,21 @@
 # Zookeepr
 
-This program demonstrates a web server using the Express.js framework and adds it to a front-end application called Zoo Keepr. The site’s data will go live on the server you build so that anyone can access it without having to download it
+This program demonstrates the creation of a web server using the Express.js framework, integrated with a front-end application called Zookeeper. The application's data is hosted on a build server, allowing anyone to access it from anywhere without downloading it.
 
 ## Built With
 
-- Heroku
-- node.js
-- JavaScript
-- inquirer
+- Node.js: The platform used for server-side and networking applications. It's built on Chrome's JavaScript V8 Engine and uses an event-driven, non-blocking I/O model, which makes it lightweight and efficient.
+- JavaScript: A programming language that is used to make web pages interactive. It is the core technology of the web alongside HTML and CSS.
+- Express.js: A fast, unopinionated, and minimalist web framework for Node.js.
+- Inquirer: A command-line interface (CLI) that simplifies the process of asking end-users questions, parsing input, validating answers, and managing hierarchical prompts.
 
-## Deployment
+## Heroku Deployment
 
 https://rocky-badlands-81041.herokuapp.com/
 
-## Mock-up
+## Demo
 
-![Zookeepr: Erik Williams](public/assets/images/mod11_mockup.png)
-![Zookeepr: Erik Williams](public/assets/images/header2.jpg)
+![](./public/assets/images/demo.gif)
 
 ## Contribution:
 
