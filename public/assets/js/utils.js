@@ -34,7 +34,14 @@ const createCard = (id, title, lines) => {
 const fetchJSON = async (url, options) => {
   const response = await fetch(url, options);
   if (!response.ok) {
-    const message = (await response.text()) || response.statusText;
+    // Error bodies are either plain text or JSON like { "error": "..." }
+    const text = await response.text();
+    let message = text || response.statusText;
+    try {
+      message = JSON.parse(text).error || message;
+    } catch {
+      // not JSON; use the text as-is
+    }
     throw new Error(message);
   }
   return response.json();
