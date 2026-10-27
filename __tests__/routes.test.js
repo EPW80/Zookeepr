@@ -44,3 +44,14 @@ test("POST /api/zookeepers rejects a missing age", async () => {
 
   expect(res.status).toBe(400);
 });
+
+test("malformed JSON returns a JSON 400 without a stack trace", async () => {
+  const res = await request(app)
+    .post("/api/animals")
+    .set("Content-Type", "application/json")
+    .send("{bad json");
+
+  expect(res.status).toBe(400);
+  expect(res.body).toEqual({ error: "Request body is not valid JSON." });
+  expect(res.text).not.toMatch(/at JSON\.parse|node_modules/);
+});
