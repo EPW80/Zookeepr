@@ -11,10 +11,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
-    "inquirer": "^8.2.4"
+    "express": "^4.17.1"
   },
   "devDependencies": {
-    "jest": "^25.1.0"
+    "jest": "^25.1.0",
+    "supertest": "^6.3.4"
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

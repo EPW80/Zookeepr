@@ -70,8 +70,12 @@
               placeholder="Enter Species"
             />
 
-            <label for="diet-input" class="form-label">Diet</label>
-            <div class="flex-row justify-center">
+            <span id="diet-label" class="form-label">Diet</span>
+            <div
+              class="flex-row justify-center"
+              role="radiogroup"
+              aria-labelledby="diet-label"
+            >
               <div class="col-auto mb-2">
                 <input
                   type="radio"
@@ -124,7 +128,7 @@
               >Personality Traits (pick all that apply)</label
             >
             <small>On macOS, use <kbd>command + click</kbd></small> <br />
-            <small>On Windows, use <kdb>ctrl + click</kdb></small>
+            <small>On Windows, use <kbd>ctrl + click</kbd></small>
             <select
               multiple
               id="personality-input"
@@ -182,6 +186,7 @@
       </section>
     </main>
 
+    <script src="./assets/js/utils.js"></script>
     <script src="./assets/js/script.js"></script>
   </body>
 </html>

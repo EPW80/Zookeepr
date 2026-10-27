@@ -10,8 +10,6 @@ This program demonstrates the creation of a web server using the Express.js fram
   
 - Express.js: A fast, unopinionated, minimalist web framework for Node.js.
  
-- Inquirer: A command-line interface (CLI) that simplifies the process of asking end-users questions, parsing input, validating answers, and managing hierarchical prompts.
-
 ## Deployment
 
 [Heroku](https://rocky-badlands-81041.herokuapp.com/)

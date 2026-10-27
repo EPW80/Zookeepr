@@ -4,6 +4,7 @@ const {
   findById,
   createNewAnimal,
   validateAnimal,
+  buildAnimal,
 } = require("../lib/animals.js");
 const { animals } = require("../data/animals");
 
@@ -12,7 +13,7 @@ jest.mock("fs");
 test("creates an animal object", () => {
   const animal = createNewAnimal(
     { name: "Darlene", id: "jhgdja3ng2" },
-    animals
+    [...animals]
   );
 
   expect(animal.name).toBe("Darlene");
@@ -86,4 +87,32 @@ test("validates personality traits", () => {
 
   expect(result).toBe(true);
   expect(result2).toBe(false);
+});
+
+test("filters by multiple personality traits in one comma-separated string", () => {
+  const startingAnimals = [
+    { id: "1", name: "A", species: "bear", diet: "omnivore", personalityTraits: ["hungry", "zany"] },
+    { id: "2", name: "B", species: "bear", diet: "omnivore", personalityTraits: ["hungry"] },
+  ];
+
+  expect(filterByQuery({ personalityTraits: "hungry,zany" }, startingAnimals)).toHaveLength(1);
+  expect(filterByQuery({ personalityTraits: ["hungry", "zany"] }, startingAnimals)).toHaveLength(1);
+  expect(filterByQuery({ personalityTraits: "" }, startingAnimals)).toHaveLength(2);
+});
+
+test("rejects blank strings and non-string traits", () => {
+  const base = { name: "Erica", species: "gorilla", diet: "omnivore", personalityTraits: ["quirky"] };
+
+  expect(validateAnimal({ ...base, name: "   " })).toBe(false);
+  expect(validateAnimal({ ...base, personalityTraits: [1] })).toBe(false);
+});
+
+test("buildAnimal keeps only known fields and assigns unique ids", () => {
+  const body = { name: " Erica ", species: "gorilla", diet: "omnivore", personalityTraits: [], isAdmin: true };
+  const a = buildAnimal(body);
+  const b = buildAnimal(body);
+
+  expect(Object.keys(a).sort()).toEqual(["diet", "id", "name", "personalityTraits", "species"]);
+  expect(a.name).toBe("Erica");
+  expect(a.id).not.toBe(b.id);
 });
