@@ -55,3 +55,19 @@ test("malformed JSON returns a JSON 400 without a stack trace", async () => {
   expect(res.body).toEqual({ error: "Request body is not valid JSON." });
   expect(res.text).not.toMatch(/at JSON\.parse|node_modules/);
 });
+
+test("oversized and unsupported-charset bodies keep their 4xx status", async () => {
+  const tooLarge = await request(app)
+    .post("/api/animals")
+    .set("Content-Type", "application/json")
+    .send(JSON.stringify({ name: "x".repeat(200000) }));
+  const badCharset = await request(app)
+    .post("/api/animals")
+    .set("Content-Type", "application/json; charset=foo")
+    .send("{}");
+
+  expect(tooLarge.status).toBe(413);
+  expect(tooLarge.body.error).toBeTruthy();
+  expect(badCharset.status).toBe(415);
+  expect(badCharset.text).not.toMatch(/node_modules/);
+});
