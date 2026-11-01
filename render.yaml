@@ -1,0 +1,23 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# Persistent disks need a paid instance type; on the free plan the SQLite
+# file is wiped on every deploy and restart.
+services:
+  - type: web
+    name: zookeepr
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATABASE_PATH
+        value: /var/data/zookeepr.db
+      # Render puts one proxy in front of the app
+      - key: TRUST_PROXY
+        value: "1"
+    disk:
+      name: zookeepr-data
+      mountPath: /var/data
+      sizeGB: 1

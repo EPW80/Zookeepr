@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build image
+        run: docker build -t zookeepr .
+      - name: Smoke test
+        run: |
+          docker run -d --name zookeepr -p 3001:3001 zookeepr
+          for i in $(seq 1 20); do
+            curl -fs http://localhost:3001/api/health && break
+            sleep 1
+          done
+          curl -fs http://localhost:3001/api/animals | grep -q Spindle
