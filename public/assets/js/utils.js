@@ -1,10 +1,10 @@
-// Shared helpers for the page scripts. Loaded before each page's script.
+// Shared helpers for the page scripts.
 
-const capitalize = (str) =>
+export const capitalize = (str) =>
   String(str).substring(0, 1).toUpperCase() + String(str).substring(1);
 
 // Create an element with text content (never HTML) to keep user data inert
-const createEl = (tag, className, text) => {
+export const createEl = (tag, className, text) => {
   const el = document.createElement(tag);
   if (className) el.className = className;
   if (text !== undefined) el.textContent = text;
@@ -12,7 +12,7 @@ const createEl = (tag, className, text) => {
 };
 
 // Render one result card: a heading plus "Label: value" lines
-const createCard = (id, title, lines) => {
+export const createCard = (id, title, lines) => {
   const col = createEl("div", "col-12 col-md-5 mb-3");
   const card = createEl("div", "card p-3");
   card.dataset.id = id;
@@ -31,7 +31,7 @@ const createCard = (id, title, lines) => {
 
 // fetch() wrapper that rejects on non-2xx responses so callers can't
 // accidentally treat a failure as success
-const fetchJSON = async (url, options) => {
+export const fetchJSON = async (url, options) => {
   const response = await fetch(url, options);
   if (!response.ok) {
     // Error bodies are either plain text or JSON like { "error": "..." }
@@ -47,7 +47,7 @@ const fetchJSON = async (url, options) => {
   return response.json();
 };
 
-const postJSON = (url, data) =>
+export const postJSON = (url, data) =>
   fetchJSON(url, {
     method: "POST",
     headers: {
@@ -58,10 +58,31 @@ const postJSON = (url, data) =>
   });
 
 // Build a query string, skipping empty values and encoding the rest
-const toQueryString = (formData) => {
+export const toQueryString = (formData) => {
   const params = new URLSearchParams();
   Object.entries(formData).forEach(([key, value]) => {
     if (value !== undefined && value !== "") params.append(key, value);
   });
   return params.toString();
+};
+
+// Show a success or error message in the page's #flash element
+let hideTimer;
+export const showMessage = (text, kind = "success") => {
+  const flash = document.querySelector("#flash");
+  flash.textContent = text;
+  flash.className = `flash flash-${kind}`;
+  flash.hidden = false;
+  flash.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  clearTimeout(hideTimer);
+  // Errors stay until the next message; successes fade after a few seconds
+  if (kind === "success") {
+    hideTimer = setTimeout(() => {
+      flash.hidden = true;
+    }, 5000);
+  }
+};
+
+export const hideMessage = () => {
+  document.querySelector("#flash").hidden = true;
 };

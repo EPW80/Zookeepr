@@ -1106,3 +1106,31 @@ nav a:hover {
     flex: 0 0 100%;
   }
 }
+
+/* FLASH MESSAGES */
+.flash {
+  margin: 0 0 var(--spacing-three);
+  padding: var(--spacing-two) var(--spacing-three);
+  border-radius: var(--border-radius);
+  border-left: 0.3rem solid;
+  background-color: var(--light);
+  color: var(--dark);
+  font-weight: 700;
+}
+
+.flash[hidden] {
+  display: none;
+}
+
+.flash-success {
+  border-color: var(--tertiary);
+}
+
+.flash-info {
+  border-color: var(--secondary);
+}
+
+.flash-error {
+  border-color: #b3261e;
+  color: #b3261e;
+}

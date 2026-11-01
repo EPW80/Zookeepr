@@ -1,3 +1,5 @@
+import { postJSON, showMessage } from "./utils.js";
+
 const $animalForm = document.querySelector("#animal-form");
 const $zookeeperForm = document.querySelector("#zookeeper-form");
 
@@ -10,17 +12,21 @@ const handleAnimalFormSubmit = async (event) => {
   const checkedDiet = $animalForm.querySelector('[name="diet"]:checked');
   const diet = checkedDiet ? checkedDiet.value : "";
 
-  const selectedTraits = $animalForm.querySelector('[name="personality"]')
-    .selectedOptions;
-  const personalityTraits = Array.from(selectedTraits, (option) => option.value);
+  const selectedTraits = $animalForm.querySelector(
+    '[name="personality"]',
+  ).selectedOptions;
+  const personalityTraits = Array.from(
+    selectedTraits,
+    (option) => option.value,
+  );
   const animalObject = { name, species, diet, personalityTraits };
 
   try {
-    await postJSON("/api/animals", animalObject);
+    const animal = await postJSON("/api/animals", animalObject);
     $animalForm.reset();
-    alert("Thank you for adding an animal!");
+    showMessage(`Thank you for adding ${animal.name}!`);
   } catch (err) {
-    alert(`Error: ${err.message}`);
+    showMessage(`Error: ${err.message}`, "error");
   }
 };
 
@@ -33,17 +39,17 @@ const handleZookeeperFormSubmit = async (event) => {
   const ageValue = $zookeeperForm.querySelector('[name="age"]').value;
   const age = ageValue === "" ? null : Number(ageValue);
   const favoriteAnimal = $zookeeperForm.querySelector(
-    '[name="favorite-animal"]'
+    '[name="favorite-animal"]',
   ).value;
 
   const zookeeperObj = { name, age, favoriteAnimal };
 
   try {
-    await postJSON("/api/zookeepers", zookeeperObj);
+    const zookeeper = await postJSON("/api/zookeepers", zookeeperObj);
     $zookeeperForm.reset();
-    alert("Thank you for adding a zookeeper!");
+    showMessage(`Thank you for adding ${zookeeper.name}!`);
   } catch (err) {
-    alert(`Error: ${err.message}`);
+    showMessage(`Error: ${err.message}`, "error");
   }
 };
 
