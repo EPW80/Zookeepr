@@ -1,23 +1,46 @@
 {
-  "name": "main",
+  "name": "zookeepr",
   "version": "1.0.0",
-  "description": "",
-  "main": "server.js",
+  "description": "Zoo animal and zookeeper catalog: Express 5 API with SQLite and a vanilla JS front end.",
+  "main": "dist/server.js",
   "scripts": {
-    "test": "jest",
-    "start": "node server.js"
+    "dev": "tsx watch --env-file-if-exists=.env src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "seed": "tsx src/seed.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.test.json",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm test"
   },
   "keywords": [],
-  "author": "",
+  "author": "Erik Williams",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.2",
+    "helmet": "^8.3.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "jest": "^25.1.0",
-    "supertest": "^6.3.4"
+    "@eslint/js": "^10.0.1",
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.20.5",
+    "@types/supertest": "^7.2.1",
+    "eslint": "^10.14.0",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.10",
+    "supertest": "^7.3.1",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.0.5"
   },
-  "jest": {
-    "testEnvironment": "node"
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
   }
 }

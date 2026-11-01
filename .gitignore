@@ -104,3 +104,12 @@ dist
 .tern-port
 
 .DS_Store
+
+# SQLite database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Build output
+dist/
