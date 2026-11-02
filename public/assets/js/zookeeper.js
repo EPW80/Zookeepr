@@ -1,4 +1,6 @@
+// @ts-check
 import {
+  $,
   capitalize,
   createCard,
   fetchJSON,
@@ -7,9 +9,13 @@ import {
   toQueryString,
 } from "./utils.js";
 
-const $zookeeperForm = document.querySelector("#zookeeper-form");
-const $displayArea = document.querySelector("#display-area");
+/** @typedef {import("./utils.js").Zookeeper} Zookeeper */
 
+/** @type {HTMLFormElement} */
+const $zookeeperForm = $("#zookeeper-form");
+const $displayArea = $("#display-area");
+
+/** @param {Zookeeper[]} resultArr */
 const printResults = (resultArr) => {
   const cards = resultArr.map(({ id, name, age, favoriteAnimal }) =>
     createCard(id, name, [
@@ -21,8 +27,10 @@ const printResults = (resultArr) => {
   $displayArea.replaceChildren(...cards);
 };
 
+/** @param {Record<string, string>} [formData] */
 const getZookeepers = async (formData = {}) => {
   try {
+    /** @type {Zookeeper[]} */
     const zookeeperArr = await fetchJSON(
       `/api/zookeepers?${toQueryString(formData)}`,
     );
@@ -33,16 +41,19 @@ const getZookeepers = async (formData = {}) => {
       hideMessage();
     }
   } catch (err) {
-    showMessage(`Error: ${err.message}`, "error");
+    showMessage(`Error: ${/** @type {Error} */ (err).message}`, "error");
   }
 };
 
+/** @param {SubmitEvent} event */
 const handleGetZookeepersSubmit = (event) => {
   event.preventDefault();
-  const name = $zookeeperForm.querySelector('[name="name"]').value.trim();
-  const age = $zookeeperForm.querySelector('[name="age"]').value;
+  /** @type {HTMLInputElement} */
+  const nameInput = $('[name="name"]', $zookeeperForm);
+  /** @type {HTMLInputElement} */
+  const ageInput = $('[name="age"]', $zookeeperForm);
 
-  getZookeepers({ name, age });
+  getZookeepers({ name: nameInput.value.trim(), age: ageInput.value });
 };
 
 $zookeeperForm.addEventListener("submit", handleGetZookeepersSubmit);

@@ -123,23 +123,58 @@
               </div>
             </div>
 
-            <label for="personality-input" class="form-label"
-              >Personality Traits (pick all that apply)</label
-            >
-            <small>On macOS, use <kbd>command + click</kbd></small> <br />
-            <small>On Windows, use <kbd>ctrl + click</kbd></small>
-            <select
-              multiple
-              id="personality-input"
-              class="form-input"
-              name="personality"
-            >
-              <option value="hungry">Hungry</option>
-              <option value="zany">Zany</option>
-              <option value="anxious">Anxious</option>
-              <option value="loving">Loving</option>
-              <option value="goofy">Goofy</option>
-            </select>
+            <fieldset class="choice-group">
+              <legend class="form-label">
+                Personality Traits (pick all that apply)
+              </legend>
+              <div class="flex-row justify-center">
+                <div class="col-auto mb-2">
+                  <input
+                    type="checkbox"
+                    id="trait-hungry"
+                    name="personality"
+                    value="hungry"
+                  />
+                  <label for="trait-hungry">Hungry</label>
+                </div>
+                <div class="col-auto mb-2">
+                  <input
+                    type="checkbox"
+                    id="trait-zany"
+                    name="personality"
+                    value="zany"
+                  />
+                  <label for="trait-zany">Zany</label>
+                </div>
+                <div class="col-auto mb-2">
+                  <input
+                    type="checkbox"
+                    id="trait-anxious"
+                    name="personality"
+                    value="anxious"
+                  />
+                  <label for="trait-anxious">Anxious</label>
+                </div>
+                <div class="col-auto mb-2">
+                  <input
+                    type="checkbox"
+                    id="trait-loving"
+                    name="personality"
+                    value="loving"
+                  />
+                  <label for="trait-loving">Loving</label>
+                </div>
+                <div class="col-auto mb-2">
+                  <input
+                    type="checkbox"
+                    id="trait-goofy"
+                    name="personality"
+                    value="goofy"
+                  />
+                  <label for="trait-goofy">Goofy</label>
+                </div>
+              </div>
+            </fieldset>
 
             <button class="btn">Add Animal</button>
           </form>

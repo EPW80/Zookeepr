@@ -1,4 +1,6 @@
+// @ts-check
 import {
+  $,
   capitalize,
   createCard,
   fetchJSON,
@@ -7,9 +9,13 @@ import {
   toQueryString,
 } from "./utils.js";
 
-const $animalForm = document.querySelector("#animals-form");
-const $displayArea = document.querySelector("#display-area");
+/** @typedef {import("./utils.js").Animal} Animal */
 
+/** @type {HTMLFormElement} */
+const $animalForm = $("#animals-form");
+const $displayArea = $("#display-area");
+
+/** @param {Animal[]} resultArr */
 const printResults = (resultArr) => {
   const cards = resultArr.map(
     ({ id, name, personalityTraits, species, diet }) =>
@@ -23,8 +29,10 @@ const printResults = (resultArr) => {
   $displayArea.replaceChildren(...cards);
 };
 
+/** @param {Record<string, string>} [formData] */
 const getAnimals = async (formData = {}) => {
   try {
+    /** @type {Animal[]} */
     const animalData = await fetchJSON(
       `/api/animals?${toQueryString(formData)}`,
     );
@@ -35,18 +43,21 @@ const getAnimals = async (formData = {}) => {
       hideMessage();
     }
   } catch (err) {
-    showMessage(`Error: ${err.message}`, "error");
+    showMessage(`Error: ${/** @type {Error} */ (err).message}`, "error");
   }
 };
 
+/** @param {SubmitEvent} event */
 const handleGetAnimalsSubmit = (event) => {
   event.preventDefault();
-  const checkedDiet = $animalForm.querySelector('[name="diet"]:checked');
-  const diet = checkedDiet ? checkedDiet.value : "";
+  /** @type {HTMLInputElement} */
+  const checkedDiet = $('[name="diet"]:checked', $animalForm);
+  const diet = checkedDiet.value;
 
-  const selectedTraits = $animalForm.querySelector(
-    '[name="personality"]',
-  ).selectedOptions;
+  /** @type {NodeListOf<HTMLInputElement>} */
+  const selectedTraits = $animalForm.querySelectorAll(
+    '[name="personality"]:checked',
+  );
   const personalityTraits = Array.from(
     selectedTraits,
     (option) => option.value,
