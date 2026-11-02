@@ -1,7 +1,9 @@
 import { Writable } from "node:stream";
 import { pino } from "pino";
+import express from "express";
 import request from "supertest";
 import { describe, expect, test } from "vitest";
+import { createErrorHandler } from "../src/errors.js";
 import { makeApp } from "./helpers.js";
 
 const newAnimal = {
@@ -169,6 +171,32 @@ describe("errors and edge cases", () => {
     const logged = lines.map((line) => JSON.parse(line));
     expect(logged).toContainEqual(
       expect.objectContaining({ level: 50, msg: "Unhandled error" }),
+    );
+  });
+
+  test("errors raised before the request logger still get a JSON 500", async () => {
+    const lines: string[] = [];
+    const logger = pino(
+      new Writable({
+        write(chunk, _encoding, done) {
+          lines.push(String(chunk));
+          done();
+        },
+      }),
+    );
+    // No pino-http here, so req.log is undefined
+    const bare = express();
+    bare.get("/boom", () => {
+      throw new Error("boom");
+    });
+    bare.use(createErrorHandler(logger));
+
+    const res = await request(bare).get("/boom");
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ error: "Something went wrong." });
+    expect(lines.map((line) => JSON.parse(line).msg)).toContain(
+      "Unhandled error",
     );
   });
 

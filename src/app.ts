@@ -4,7 +4,7 @@ import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
 import { pinoHttp } from "pino-http";
 import type { Db } from "./db.js";
-import { errorHandler } from "./errors.js";
+import { createErrorHandler } from "./errors.js";
 import { silentLogger, type Logger } from "./logger.js";
 import { createAnimalRepository } from "./repositories/animals.js";
 import { createZookeeperRepository } from "./repositories/zookeepers.js";
@@ -43,7 +43,6 @@ export function createApp({
       },
     }),
   );
-  app.use(express.json({ limit: "10kb" }));
   // Static files are served before the request logger, so only page and
   // API requests are logged
   app.use(express.static(publicDir));
@@ -51,6 +50,15 @@ export function createApp({
     pinoHttp({
       logger,
       autoLogging: { ignore: (req) => req.url === "/api/health" },
+      // Keep log lines short, and never log headers such as cookies
+      serializers: {
+        req: (req: { id: unknown; method: string; url: string }) => ({
+          id: req.id,
+          method: req.method,
+          url: req.url,
+        }),
+        res: (res: { statusCode: number }) => ({ statusCode: res.statusCode }),
+      },
       customLogLevel: (_req, res, err) =>
         err || res.statusCode >= 500
           ? "error"
@@ -59,6 +67,7 @@ export function createApp({
             : "info",
     }),
   );
+  app.use(express.json({ limit: "10kb" }));
 
   const beforeWrite: RequestHandler[] =
     writeLimit === false
@@ -82,7 +91,7 @@ export function createApp({
     }),
   );
   app.use(createHtmlRouter(publicDir));
-  app.use(errorHandler);
+  app.use(createErrorHandler(logger));
 
   return app;
 }
