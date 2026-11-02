@@ -2,7 +2,7 @@
 
 A small catalog of zoo animals and the zookeepers who look after them. An Express 5 API stores records in SQLite and serves a plain HTML, CSS and JavaScript front end for adding and searching them.
 
-![Demo of adding and searching animals](./public/assets/images/demo.gif)
+![Demo: adding an animal and a zookeeper, then filtering animals by trait and diet](./public/assets/images/demo.webp)
 
 ## Stack
 

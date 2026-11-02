@@ -9,7 +9,7 @@
     "start": "node dist/server.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc -p tsconfig.test.json && tsc -p tsconfig.frontend.json",
+    "typecheck": "tsc -p tsconfig.test.json && tsc -p tsconfig.e2e.json && tsc -p tsconfig.frontend.json",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

@@ -136,6 +136,21 @@ test.describe("pages", () => {
     }
   });
 
+  test("draws trait checkboxes square and diet radios round", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const radius = (inputId: string) =>
+      page
+        .locator(`label[for="${inputId}"]`)
+        .evaluate((label) => getComputedStyle(label, "::before").borderRadius);
+
+    expect(await radius("trait-hungry")).toBe("3px");
+    expect(await radius("herbivore-input")).toBe("100%");
+    await pick(page, "trait-hungry");
+    expect(await radius("trait-hungry")).toBe("3px");
+  });
+
   test("falls back to a working home page for unknown pages", async ({
     page,
   }) => {

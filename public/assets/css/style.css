@@ -233,8 +233,10 @@ nav a:hover {
 }
 
 /* Checkboxes share the radio styles above, with square boxes */
-[type="checkbox"] + label:before,
-[type="checkbox"] + label:after {
+[type="checkbox"]:checked + label:before,
+[type="checkbox"]:not(:checked) + label:before,
+[type="checkbox"]:checked + label:after,
+[type="checkbox"]:not(:checked) + label:after {
   border-radius: 3px;
 }
 
