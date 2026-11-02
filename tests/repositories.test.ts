@@ -1,3 +1,7 @@
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
 import { beforeEach, describe, expect, test } from "vitest";
 import { openDatabase, type Db } from "../src/db.js";
 import { createAnimalRepository } from "../src/repositories/animals.js";
@@ -107,5 +111,41 @@ describe("seedIfEmpty", () => {
 
     expect(createAnimalRepository(db).count()).toBe(1);
     expect(createZookeeperRepository(db).count()).toBe(9);
+  });
+
+  test("imports records older versions saved, beyond today's POST limits", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "zookeepr-seed-"));
+    const longName = "x".repeat(150);
+    const traits = Array.from({ length: 25 }, (_, i) => `trait${i}`);
+    writeFileSync(
+      path.join(dir, "animals.json"),
+      JSON.stringify({
+        animals: [
+          {
+            id: "0",
+            name: longName,
+            species: "bear",
+            diet: "omnivore",
+            personalityTraits: traits,
+          },
+        ],
+      }),
+    );
+    writeFileSync(
+      path.join(dir, "zookeepers.json"),
+      JSON.stringify({
+        zookeepers: [
+          { id: "0", name: "Old", age: 151, favoriteAnimal: "otter" },
+        ],
+      }),
+    );
+
+    seedIfEmpty(db, pathToFileURL(dir + path.sep));
+
+    expect(createAnimalRepository(db).findById("0")?.name).toBe(longName);
+    expect(
+      createAnimalRepository(db).findById("0")?.personalityTraits,
+    ).toHaveLength(25);
+    expect(createZookeeperRepository(db).findById("0")?.age).toBe(151);
   });
 });

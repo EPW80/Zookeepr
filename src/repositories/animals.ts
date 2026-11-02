@@ -41,12 +41,17 @@ export function createAnimalRepository(db: Db) {
           params.push(value);
         }
       }
-      // Every requested trait must be present
-      for (const trait of query.personalityTraits ?? []) {
+      // Every requested trait must be present. One clause compares against
+      // a JSON array of the requested traits, however many there are.
+      const traits = [...new Set(query.personalityTraits ?? [])];
+      if (traits.length) {
         conditions.push(
-          "EXISTS (SELECT 1 FROM json_each(personality_traits) WHERE value = ?)",
+          `NOT EXISTS (
+            SELECT 1 FROM json_each(?) AS wanted
+            WHERE wanted.value NOT IN (SELECT value FROM json_each(personality_traits))
+          )`,
         );
-        params.push(trait);
+        params.push(JSON.stringify(traits));
       }
 
       const where = conditions.length

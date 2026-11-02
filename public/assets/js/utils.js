@@ -1,9 +1,37 @@
+// @ts-check
 // Shared helpers for the page scripts.
 
+/**
+ * @typedef {{ id: string, name: string, species: string, diet: string, personalityTraits: string[] }} Animal
+ * @typedef {{ id: string, name: string, age: number, favoriteAnimal: string }} Zookeeper
+ */
+
+/**
+ * Find an element, failing loudly if the page doesn't have it. The element
+ * type comes from the variable it's assigned to.
+ * @template {Element} [T=HTMLElement]
+ * @param {string} selector
+ * @param {ParentNode} [root]
+ * @returns {T}
+ */
+export const $ = (selector, root = document) => {
+  const el = root.querySelector(selector);
+  if (!el) throw new Error(`Missing element: ${selector}`);
+  return /** @type {T} */ (el);
+};
+
+/** @param {unknown} str */
 export const capitalize = (str) =>
   String(str).substring(0, 1).toUpperCase() + String(str).substring(1);
 
 // Create an element with text content (never HTML) to keep user data inert
+/**
+ * @template {keyof HTMLElementTagNameMap} K
+ * @param {K} tag
+ * @param {string} [className]
+ * @param {string} [text]
+ * @returns {HTMLElementTagNameMap[K]}
+ */
 export const createEl = (tag, className, text) => {
   const el = document.createElement(tag);
   if (className) el.className = className;
@@ -12,6 +40,11 @@ export const createEl = (tag, className, text) => {
 };
 
 // Render one result card: a heading plus "Label: value" lines
+/**
+ * @param {string} id
+ * @param {string} title
+ * @param {Array<[string, string | number]>} lines
+ */
 export const createCard = (id, title, lines) => {
   const col = createEl("div", "col-12 col-md-5 mb-3");
   const card = createEl("div", "card p-3");
@@ -31,6 +64,12 @@ export const createCard = (id, title, lines) => {
 
 // fetch() wrapper that rejects on non-2xx responses so callers can't
 // accidentally treat a failure as success
+/**
+ * @template T
+ * @param {string} url
+ * @param {RequestInit} [options]
+ * @returns {Promise<T>}
+ */
 export const fetchJSON = async (url, options) => {
   const response = await fetch(url, options);
   if (!response.ok) {
@@ -44,9 +83,15 @@ export const fetchJSON = async (url, options) => {
     }
     throw new Error(message);
   }
-  return response.json();
+  return /** @type {Promise<T>} */ (response.json());
 };
 
+/**
+ * @template T
+ * @param {string} url
+ * @param {unknown} data
+ * @returns {Promise<T>}
+ */
 export const postJSON = (url, data) =>
   fetchJSON(url, {
     method: "POST",
@@ -58,6 +103,7 @@ export const postJSON = (url, data) =>
   });
 
 // Build a query string, skipping empty values and encoding the rest
+/** @param {Record<string, string | undefined>} formData */
 export const toQueryString = (formData) => {
   const params = new URLSearchParams();
   Object.entries(formData).forEach(([key, value]) => {
@@ -67,9 +113,14 @@ export const toQueryString = (formData) => {
 };
 
 // Show a success or error message in the page's #flash element
+/** @type {ReturnType<typeof setTimeout> | undefined} */
 let hideTimer;
+/**
+ * @param {string} text
+ * @param {"success" | "info" | "error"} [kind]
+ */
 export const showMessage = (text, kind = "success") => {
-  const flash = document.querySelector("#flash");
+  const flash = $("#flash");
   flash.textContent = text;
   flash.className = `flash flash-${kind}`;
   flash.hidden = false;
@@ -84,5 +135,5 @@ export const showMessage = (text, kind = "success") => {
 };
 
 export const hideMessage = () => {
-  document.querySelector("#flash").hidden = true;
+  $("#flash").hidden = true;
 };

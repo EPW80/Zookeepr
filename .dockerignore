@@ -8,4 +8,4 @@ tests
 *.db-*
 .env
 # Only used by the README
-public/assets/images/demo.gif
+public/assets/images/demo.webp

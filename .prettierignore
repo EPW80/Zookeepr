@@ -5,3 +5,5 @@ package-lock.json
 data
 public/assets/css
 public/*.html
+test-results
+playwright-report

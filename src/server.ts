@@ -1,5 +1,6 @@
 import { createApp } from "./app.js";
 import { openDatabase } from "./db.js";
+import { createLogger } from "./logger.js";
 import { seedIfEmpty } from "./seed.js";
 
 const port = Number(process.env.PORT ?? 3001);
@@ -17,16 +18,17 @@ function parseTrustProxy(value: string | undefined): number | boolean {
   return hops;
 }
 
+const logger = createLogger();
 const db = openDatabase(databasePath);
 seedIfEmpty(db);
 
-const server = createApp({ db, trustProxy }).listen(port, () => {
-  console.log(`Zookeepr listening on http://localhost:${port}`);
+const server = createApp({ db, trustProxy, logger }).listen(port, () => {
+  logger.info({ port, databasePath }, "Zookeepr listening");
 });
 
 // Finish in-flight requests and close the database cleanly on shutdown
 function shutdown(signal: string) {
-  console.log(`${signal} received, shutting down`);
+  logger.info({ signal }, "Shutting down");
   server.close(() => {
     db.close();
     process.exit(0);

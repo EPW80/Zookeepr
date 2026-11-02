@@ -9,7 +9,7 @@
       href="https://fonts.googleapis.com/css?family=Karla:400,700|Rubik:400,400i,700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./assets/css/style.css" />
+    <link rel="stylesheet" href="/assets/css/style.css" />
   </head>
 
   <body>
@@ -46,6 +46,16 @@
               role="radiogroup"
               aria-labelledby="diet-label"
             >
+              <div class="col-auto mb-2">
+                <input
+                  type="radio"
+                  id="any-diet-input"
+                  name="diet"
+                  value=""
+                  checked
+                />
+                <label for="any-diet-input">Any</label>
+              </div>
               <div class="col-auto mb-2">
                 <input
                   type="radio"
@@ -92,23 +102,58 @@
                 <label for="piscivore-input">Piscivore</label>
               </div>
             </div>
-            <label for="personality-input" class="form-label"
-              >Personality Traits (pick all that apply)</label
-            >
-            <small>On macOS, use <kbd>command + click</kbd></small> <br />
-            <small>On Windows, use <kbd>ctrl + click</kbd></small>
-            <select
-              multiple
-              id="personality-input"
-              class="form-input"
-              name="personality"
-            >
-              <option value="hungry">Hungry</option>
-              <option value="zany">Zany</option>
-              <option value="anxious">Anxious</option>
-              <option value="loving">Loving</option>
-              <option value="goofy">Goofy</option>
-            </select>
+            <fieldset class="choice-group">
+              <legend class="form-label">
+                Personality Traits (pick all that apply)
+              </legend>
+              <div class="flex-row justify-center">
+                <div class="col-auto mb-2">
+                  <input
+                    type="checkbox"
+                    id="filter-trait-hungry"
+                    name="personality"
+                    value="hungry"
+                  />
+                  <label for="filter-trait-hungry">Hungry</label>
+                </div>
+                <div class="col-auto mb-2">
+                  <input
+                    type="checkbox"
+                    id="filter-trait-zany"
+                    name="personality"
+                    value="zany"
+                  />
+                  <label for="filter-trait-zany">Zany</label>
+                </div>
+                <div class="col-auto mb-2">
+                  <input
+                    type="checkbox"
+                    id="filter-trait-anxious"
+                    name="personality"
+                    value="anxious"
+                  />
+                  <label for="filter-trait-anxious">Anxious</label>
+                </div>
+                <div class="col-auto mb-2">
+                  <input
+                    type="checkbox"
+                    id="filter-trait-loving"
+                    name="personality"
+                    value="loving"
+                  />
+                  <label for="filter-trait-loving">Loving</label>
+                </div>
+                <div class="col-auto mb-2">
+                  <input
+                    type="checkbox"
+                    id="filter-trait-goofy"
+                    name="personality"
+                    value="goofy"
+                  />
+                  <label for="filter-trait-goofy">Goofy</label>
+                </div>
+              </div>
+            </fieldset>
 
             <button class="btn">Get Animals</button>
           </form>
@@ -119,6 +164,6 @@
       </section>
     </main>
 
-    <script type="module" src="./assets/js/animals.js"></script>
+    <script type="module" src="/assets/js/animals.js"></script>
   </body>
 </html>

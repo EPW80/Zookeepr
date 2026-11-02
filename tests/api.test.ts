@@ -1,5 +1,9 @@
+import { Writable } from "node:stream";
+import { pino } from "pino";
+import express from "express";
 import request from "supertest";
 import { describe, expect, test } from "vitest";
+import { createErrorHandler } from "../src/errors.js";
 import { makeApp } from "./helpers.js";
 
 const newAnimal = {
@@ -29,6 +33,16 @@ describe("animals API", () => {
         expect.arrayContaining(["hungry", "zany"]),
       );
     }
+  });
+
+  test("handles a very long trait list without a server error", async () => {
+    const traits = Array(1001).fill("hungry").join(",");
+    const res = await request(makeApp().app).get(
+      `/api/animals?personalityTraits=${traits}`,
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBeGreaterThan(0);
   });
 
   test("gets one animal, or a JSON 404", async () => {
@@ -79,6 +93,15 @@ describe("zookeepers API", () => {
     ]);
   });
 
+  test("gets one zookeeper, or a JSON 404", async () => {
+    const { app } = makeApp();
+
+    expect((await request(app).get("/api/zookeepers/0")).body.name).toBe("Kim");
+    const missing = await request(app).get("/api/zookeepers/nope");
+    expect(missing.status).toBe(404);
+    expect(missing.body).toEqual({ error: "Zookeeper not found." });
+  });
+
   test("rejects a missing age and a non-numeric age filter", async () => {
     const { app } = makeApp();
 
@@ -126,6 +149,55 @@ describe("errors and edge cases", () => {
     expect(tooLarge.status).toBe(413);
     expect(badCharset.status).toBe(415);
     expect(badCharset.text).not.toMatch(/node_modules/);
+  });
+
+  test("unexpected errors return a generic 500 and are logged", async () => {
+    const lines: string[] = [];
+    const logger = pino(
+      new Writable({
+        write(chunk, _encoding, done) {
+          lines.push(String(chunk));
+          done();
+        },
+      }),
+    );
+    const { app, db } = makeApp({ logger });
+    db.close(); // every query now throws
+
+    const res = await request(app).get("/api/animals");
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ error: "Something went wrong." });
+    const logged = lines.map((line) => JSON.parse(line));
+    expect(logged).toContainEqual(
+      expect.objectContaining({ level: 50, msg: "Unhandled error" }),
+    );
+  });
+
+  test("errors raised before the request logger still get a JSON 500", async () => {
+    const lines: string[] = [];
+    const logger = pino(
+      new Writable({
+        write(chunk, _encoding, done) {
+          lines.push(String(chunk));
+          done();
+        },
+      }),
+    );
+    // No pino-http here, so req.log is undefined
+    const bare = express();
+    bare.get("/boom", () => {
+      throw new Error("boom");
+    });
+    bare.use(createErrorHandler(logger));
+
+    const res = await request(bare).get("/boom");
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({ error: "Something went wrong." });
+    expect(lines.map((line) => JSON.parse(line).msg)).toContain(
+      "Unhandled error",
+    );
   });
 
   test("a POST with no body is a 400, not a crash", async () => {

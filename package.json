@@ -7,14 +7,15 @@
     "dev": "tsx watch --env-file-if-exists=.env src/server.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/server.js",
-    "seed": "tsx src/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc -p tsconfig.test.json",
+    "typecheck": "tsc -p tsconfig.test.json && tsc -p tsconfig.e2e.json && tsc -p tsconfig.frontend.json",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run lint && npm run format:check && npm run typecheck && npm test"
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm test",
+    "test:e2e": "playwright test",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "Erik Williams",
@@ -23,15 +24,20 @@
     "express": "^5.3.0",
     "express-rate-limit": "^8.7.2",
     "helmet": "^8.3.0",
+    "pino": "^10.4.0",
+    "pino-http": "^11.0.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.64.1",
     "@types/express": "^5.0.6",
     "@types/node": "^26.6.6",
     "@types/supertest": "^7.2.1",
+    "@vitest/coverage-v8": "^5.0.5",
     "eslint": "^10.14.0",
     "globals": "^17.13.0",
+    "pino-pretty": "^13.2.0",
     "prettier": "^3.9.10",
     "supertest": "^7.3.1",
     "tsx": "^4.23.15",
@@ -41,6 +47,6 @@
   },
   "type": "module",
   "engines": {
-    "node": ">=22.13"
+    "node": ">=24"
   }
 }
