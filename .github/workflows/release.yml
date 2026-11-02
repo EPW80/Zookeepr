@@ -14,10 +14,17 @@ permissions:
 
 jobs:
   publish:
-    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    # Only CI runs for pushes to this repository's main branch. CI also runs on
+    # pull requests, and a fork's PR from its own "main" would otherwise match
+    # the branch filter above and publish unmerged code.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           # The commit CI tested, not whatever main points at now
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
@@ -33,6 +40,9 @@ jobs:
       - id: meta
         uses: docker/metadata-action@v5
         with:
+          # Take the SHA and labels from the checked-out commit, not the
+          # workflow_run context (which is main's head, possibly newer)
+          context: git
           images: ${{ env.IMAGE }}
           tags: |
             type=raw,value=latest
