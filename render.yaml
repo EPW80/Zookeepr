@@ -11,7 +11,7 @@ services:
     healthCheckPath: /api/health
     envVars:
       - key: NODE_VERSION
-        value: "22"
+        value: "26"
       - key: DATABASE_PATH
         value: /var/data/zookeepr.db
       # Render puts one proxy in front of the app

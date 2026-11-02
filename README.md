@@ -6,7 +6,7 @@ A small catalog of zoo animals and the zookeepers who look after them. An Expres
 
 ## Stack
 
-- **Server:** Node.js 22, Express 5, TypeScript
+- **Server:** Node.js 26 LTS (24 or later supported), Express 5, TypeScript
 - **Database:** SQLite through Node's built-in `node:sqlite` (no native modules to install)
 - **Validation:** Zod
 - **Security:** Helmet headers, rate-limited writes, JSON error responses with no stack traces
@@ -15,7 +15,7 @@ A small catalog of zoo animals and the zookeepers who look after them. An Expres
 
 ## Getting started
 
-You need Node.js 22.13 or later (`nvm use` picks up `.nvmrc`).
+You need Node.js 24 or later; 26 is the current LTS and what `.nvmrc`, Docker and CI use (`nvm use` picks it up).
 
 ```sh
 npm install
@@ -23,8 +23,6 @@ npm run dev
 ```
 
 Open http://localhost:3001. On first start the database is created at `data/zookeepr.db` and filled with the starting catalog from `data/animals.json` and `data/zookeepers.json`. Those JSON files are only read, never written.
-
-Node prints an `ExperimentalWarning` for SQLite on startup. It's expected: `node:sqlite` is stable enough for this app but still marked experimental in Node 22.
 
 ## Scripts
 
