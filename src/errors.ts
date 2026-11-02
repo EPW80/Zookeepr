@@ -20,7 +20,7 @@ function describe(err: ZodError): string {
 
 // Client errors keep their 4xx status; anything else is a generic 500.
 // Stack traces are never sent to the client.
-export const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
+export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   if (res.headersSent) {
     next(err);
     return;
@@ -41,6 +41,6 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, next) => {
     return;
   }
 
-  console.error(err);
+  req.log.error({ err }, "Unhandled error");
   res.status(500).json({ error: "Something went wrong." });
 };

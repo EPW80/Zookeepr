@@ -2,8 +2,10 @@ import path from "node:path";
 import express, { type RequestHandler } from "express";
 import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
+import { pinoHttp } from "pino-http";
 import type { Db } from "./db.js";
 import { errorHandler } from "./errors.js";
+import { silentLogger, type Logger } from "./logger.js";
 import { createAnimalRepository } from "./repositories/animals.js";
 import { createZookeeperRepository } from "./repositories/zookeepers.js";
 import { createApiRouter } from "./routes/api.js";
@@ -18,12 +20,15 @@ export interface AppOptions {
   writeLimit?: number | false;
   /** Express "trust proxy" setting; set it when running behind a load balancer. */
   trustProxy?: number | boolean;
+  /** Where request and error logs go. Silent by default. */
+  logger?: Logger;
 }
 
 export function createApp({
   db,
   writeLimit = 50,
   trustProxy = false,
+  logger = silentLogger,
 }: AppOptions) {
   const app = express();
   app.set("trust proxy", trustProxy);
@@ -39,7 +44,21 @@ export function createApp({
     }),
   );
   app.use(express.json({ limit: "10kb" }));
+  // Static files are served before the request logger, so only page and
+  // API requests are logged
   app.use(express.static(publicDir));
+  app.use(
+    pinoHttp({
+      logger,
+      autoLogging: { ignore: (req) => req.url === "/api/health" },
+      customLogLevel: (_req, res, err) =>
+        err || res.statusCode >= 500
+          ? "error"
+          : res.statusCode >= 400
+            ? "warn"
+            : "info",
+    }),
+  );
 
   const beforeWrite: RequestHandler[] =
     writeLimit === false
