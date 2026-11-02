@@ -31,6 +31,16 @@ describe("animals API", () => {
     }
   });
 
+  test("handles a very long trait list without a server error", async () => {
+    const traits = Array(1001).fill("hungry").join(",");
+    const res = await request(makeApp().app).get(
+      `/api/animals?personalityTraits=${traits}`,
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBeGreaterThan(0);
+  });
+
   test("gets one animal, or a JSON 404", async () => {
     const { app } = makeApp();
 
